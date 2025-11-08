@@ -1,0 +1,41 @@
+/* Basic styles for the Timeline component */
+.timeline {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e6eef6;
+  border-radius: 6px;
+}
+
+.timeline h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timeline-event {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 6px;
+  border-radius: 4px;
+  background: #f7fbff;
+  border: 1px solid #eef6ff;
+}
+
+.event-time {
+  font-weight: 700;
+  width: 60px;
+}
+
+.event-description {
+  color: #333;
+}
+
+@media (max-width: 800px) {
+  .timeline-event { flex-direction: column; }
+}

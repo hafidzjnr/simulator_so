@@ -1,0 +1,53 @@
+/* Basic styles for the Scheduler component and its child components */
+.scheduler {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.resource-view {
+  padding: 8px;
+}
+
+.process-list {
+  padding: 8px;
+}
+
+.timeline {
+  padding: 8px;
+}
+
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gantt {
+  max-height: 220px;
+  overflow: auto;
+}
+
+.log {
+  max-height: 160px;
+  overflow: auto;
+  margin-top: 8px;
+}
+
+.queue { margin-top: 8px; }
+.chip { display:inline-block; padding:6px 10px; margin:4px; border-radius:4px; }
+.chip.ready { background:#ffeb3b }
+.chip.blocked { background:#f44336; color:#fff }
+
+/* small responsive tweak */
+@media (max-width: 800px) {
+  .scheduler { grid-template-columns: 1fr; }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react'; 
 import ProcessList from './ProcessList';
 import Timeline from './Timeline';
 import ResourceView from './ResourceView';
@@ -10,32 +10,14 @@ const Scheduler = () => {
     const {
         processes,
         resources,
-        startSimulation,
-        pauseSimulation,
+        startSimulation, // Ambil fungsi aslinya
+        pauseSimulation, // Ambil fungsi aslinya
         stepSimulation,
-        resetSimulation,
+        resetSimulation, // Ambil fungsi aslinya
         algorithm,
         setAlgorithm,
         log,
     } = useScheduler();
-
-    const [setIsRunning] = useState(false);
-
-
-    const handlePlay = () => {
-        setIsRunning(true);
-        startSimulation();
-    };
-
-    const handlePause = () => {
-        setIsRunning(false);
-        pauseSimulation();
-    };
-
-    const handleReset = () => {
-        setIsRunning(false);
-        resetSimulation();
-    };
 
     const schedulingAlgorithms = ['FCFS', 'RR', 'PRIORITY', 'SJF'];
 
@@ -44,16 +26,22 @@ const Scheduler = () => {
         { name: 'Resource B (File)', isAvailable: !resources.B, heldBy: resources.B },
     ];
 
-    const timelineEvents = log.map((entry, idx) => ({ time: `T=${idx}`, description: entry }));
+    // Perbaikan dari sebelumnya untuk parsing log
+    const timelineEvents = log.map((entry) => {
+        const parts = entry.split(': ');
+        const time = parts[0]; 
+        const description = parts.slice(1).join(': ');
+        return { time, description };
+    });
 
     return (
         <div className="scheduler">
             <h1>Process Scheduler Simulation</h1>
             <Controls
-                onPlay={handlePlay}
-                onPause={handlePause}
+                onPlay={startSimulation}  // Langsung gunakan fungsi dari hook
+                onPause={pauseSimulation} // Langsung gunakan fungsi dari hook
                 onStep={stepSimulation}
-                onReset={handleReset}
+                onReset={resetSimulation} // Langsung gunakan fungsi dari hook
                 schedulingAlgorithms={schedulingAlgorithms}
                 selectedAlgorithm={algorithm}
                 onAlgorithmChange={(alg) => setAlgorithm(alg)}

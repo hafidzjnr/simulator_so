@@ -177,6 +177,8 @@ export function useScheduler(initialProcs) {
 
         // operate on CPU
         const cpuNow = cpuRef.current;
+        // Di dalam file: hafidzjnr/simulator_so/simulator_so-main/simulator_so/hooks/useScheduler.js
+
         if (!cpuNow.running) {
             // schedule
             const pick = pickFromReady();
@@ -184,22 +186,56 @@ export function useScheduler(initialProcs) {
                 // remove from ready
                 setReadyQueue((rq) => rq.filter((x) => x !== pick));
                 const p = findProc(pick);
-                // determine next instruction
-                const inst = p.instructions[p.ip];
-                if (inst && inst.type === 'CPU') {
-                    // set running with either full CPU duration or quantum (for RR)
+                const inst = p.instructions[p.ip]; // Instruksi saat ini
+
+                if (!inst || inst.type === 'END') {
+                    // --- AWAL PERBAIKAN ---
+                    // Langsung tangani instruksi END jika itu yang pertama
+                    setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, state: 'finished' } : pr)));
+                    setLog((l) => [...l, `T=${timeRef.current}: ${pick} selesai (instruksi END).`]);
+                    // --- AKHIR PERBAIKAN ---
+                } else if (inst.type === 'CPU') {
+                    // Logika asli Anda untuk CPU
                     let runLen = inst.duration;
                     if (algorithm === 'RR') runLen = Math.min(runLen, quantum);
                     setCpu({ running: pick, remaining: runLen });
                     setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, state: 'running', remaining: runLen } : pr)));
                     setLog((l) => [...l, `T=${timeRef.current}: Penjadwal memilih ${pick} untuk dieksekusi.`]);
+                } else if (inst.type === 'LOCK') {
+                    // --- AWAL PERBAIKAN ---
+                    // Langsung tangani instruksi LOCK
+                    const r = inst.resource;
+                    if (!resourcesRef.current[r]) {
+                        // Resource tersedia
+                        setResources((res) => ({ ...res, [r]: pick }));
+                        setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, ip: p.ip + 1, state: 'ready' } : pr)));
+                        setReadyQueue((rq) => [...rq, pick]); // Masuk ready queue lagi untuk instruksi berikutnya
+                        setLog((l) => [...l, `T=${timeRef.current}: Resource ${r} bebas. ${pick} meng-LOCK Resource ${r}.`]);
+                    } else {
+                        // Resource sibuk, proses diblokir
+                        blockOn(pick, r);
+                    }
+                    // --- AKHIR PERBAIKAN ---
+                } else if (inst.type === 'UNLOCK') {
+                    // --- AWAL PERBAIKAN ---
+                    // Langsung tangani instruksi UNLOCK
+                    const r = inst.resource;
+                    setResources((res) => {
+                        const newRes = { ...res, [r]: null };
+                        setLog((l) => [...l, `T=${timeRef.current}: ${pick} melakukan UNLOCK Resource ${r}.`]);
+                        tryWake(r); // Coba bangunkan proses lain
+                        return newRes;
+                    });
+                    setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, ip: p.ip + 1, state: 'ready' } : pr)));
+                    setReadyQueue((rq) => [...rq, pick]); // Masuk ready queue lagi
+                    // --- AKHIR PERBAIKAN ---
                 } else {
-                    // No CPU instruction at ip -> try to advance/handle non-CPU
-                    // handle in a small loop below by setting process state to ready and letting next ticks handle it
-                    enqueueReady(pick, `${pick} masuk Ready Queue (instruksi bukan CPU).`);
+                     // Fallback jika ada tipe instruksi aneh (seharusnya tidak terjadi)
+                     enqueueReady(pick, `${pick} masuk Ready Queue (instruksi tidak dikenal).`);
                 }
             }
         } else {
+            // ... (Sisa kode Anda untuk 'CPU is running' tetap sama) ...
             // CPU is running
             setCpu((c) => {
                 const remaining = c.remaining - 1;

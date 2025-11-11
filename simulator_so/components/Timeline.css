@@ -1,41 +1,38 @@
-/* Basic styles for the Timeline component */
 .timeline {
-  padding: 8px;
-  background: #fff;
-  border: 1px solid #e6eef6;
-  border-radius: 6px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin: 20px;
 }
 
 .timeline h2 {
-  margin: 0 0 8px 0;
-  font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .timeline-container {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .timeline-event {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 6px;
-  border-radius: 4px;
-  background: #f7fbff;
-  border: 1px solid #eef6ff;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .event-time {
-  font-weight: 700;
-  width: 60px;
+    font-weight: bold;
+    margin-right: 15px;
+    color: #2196F3;
+    min-width: 60px;
 }
 
 .event-description {
-  color: #333;
-}
-
-@media (max-width: 800px) {
-  .timeline-event { flex-direction: column; }
+    color: #666;
 }

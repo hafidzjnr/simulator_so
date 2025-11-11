@@ -4,7 +4,7 @@ import Timeline from './Timeline';
 import ResourceView from './ResourceView';
 import Controls from './Controls';
 import { useScheduler } from '../hooks/useScheduler';
-import './Scheduler.css';
+// import './Scheduler.css';
 
 const Scheduler = () => {
     const {

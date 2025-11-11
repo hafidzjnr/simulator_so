@@ -12,7 +12,7 @@ const HomePage = () => {
           Pelajari konsep sistem operasi dengan cara yang menyenangkan dan intuitif.
         </p>
         <div className="home-button">
-          <Link to="/introduction" className="btn btn-secondary">Mulai Tutorial</Link>
+          <Link to="/instruction" className="btn btn-secondary">Mulai Tutorial</Link>
           <Link to="/simulator" className="btn btn-primary">Get Started</Link>
         </div>
       </header>

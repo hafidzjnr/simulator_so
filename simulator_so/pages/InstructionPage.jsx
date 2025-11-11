@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import '../styles/InstructionPage.css';
+import '../src/styles/InstructionPage.css';
 
 const InstructionPage = () => {
   return (

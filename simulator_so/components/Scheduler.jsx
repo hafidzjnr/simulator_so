@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ProcessList from './ProcessList';
 import Timeline from './Timeline';
 import ResourceView from './ResourceView';
 import Controls from './Controls';
 import { useScheduler } from '../hooks/useScheduler';
-// import './Scheduler.css';
+import '../src/styles/Scheduler.css';
 
 const Scheduler = () => {
     const {
@@ -19,16 +19,8 @@ const Scheduler = () => {
         log,
     } = useScheduler();
 
-    const [isRunning, setIsRunning] = useState(false);
+    const [setIsRunning] = useState(false);
 
-    useEffect(() => {
-        if (isRunning) {
-            const interval = setInterval(() => {
-                stepSimulation();
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [isRunning, stepSimulation]);
 
     const handlePlay = () => {
         setIsRunning(true);
@@ -45,7 +37,7 @@ const Scheduler = () => {
         resetSimulation();
     };
 
-    const schedulingAlgorithms = ['FCFS', 'RR', 'PRIORITY'];
+    const schedulingAlgorithms = ['FCFS', 'RR', 'PRIORITY', 'SJF'];
 
     const resourceList = [
         { name: 'Resource A (Printer)', isAvailable: !resources.A, heldBy: resources.A },

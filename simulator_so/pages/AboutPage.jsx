@@ -1,5 +1,5 @@
 import React from "react";
-// import '../styles/AboutPage.css';
+import '../src/styles/AboutPage.css';
 
 const teamMambers = [
   {name: 'Mohamad Rayhan Arhbytio', role: 'Research Materials'},

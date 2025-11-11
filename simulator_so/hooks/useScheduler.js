@@ -116,10 +116,18 @@ export function useScheduler(initialProcs) {
         });
     }, []);
 
+// Di dalam file: simulator_so/hooks/useScheduler.js
+
     const pickFromReady = useCallback(() => {
         const rq = readyRef.current;
         if (!rq || rq.length === 0) return null;
-        if (algorithm === 'FCFS') return rq[0];
+
+        // Algoritma FCFS & RR (Round Robin) sama-sama ambil yang paling depan
+        if (algorithm === 'FCFS' || algorithm === 'RR') {
+            return rq[0];
+        }
+
+        // Algoritma Priority (Angka lebih kecil = Prioritas lebih tinggi)
         if (algorithm === 'PRIORITY') {
             const sorted = [...rq].sort((a, b) => {
                 const pa = findProc(a)?.priority ?? 99;
@@ -128,7 +136,30 @@ export function useScheduler(initialProcs) {
             });
             return sorted[0];
         }
-        if (algorithm === 'RR') return rq[0];
+
+        // --- IMPLEMENTASI BARU: SJF (Shortest Job First) ---
+        if (algorithm === 'SJF') {
+            const sorted = [...rq].sort((a, b) => {
+                const pA = findProc(a);
+                const pB = findProc(b);
+
+                // Ambil durasi instruksi CPU saat ini untuk masing-masing proses
+                // Kita perlu mengecek instruksi di indeks 'ip' saat ini
+                const instA = pA?.instructions[pA.ip];
+                const durationA = (instA && instA.type === 'CPU') ? instA.duration : 0;
+
+                const instB = pB?.instructions[pB.ip];
+                const durationB = (instB && instB.type === 'CPU') ? instB.duration : 0;
+
+                // Sort dari durasi terpendek ke terpanjang
+                // Jika durasi sama, gunakan aturan FCFS (siapa yang antri duluan)
+                if (durationA === durationB) {
+                    return rq.indexOf(a) - rq.indexOf(b);
+                }
+                return durationA - durationB;
+            });
+            return sorted[0];
+        }
         return rq[0];
     }, [algorithm]);
 
@@ -173,66 +204,100 @@ export function useScheduler(initialProcs) {
             setCpu((c) => {
                 const remaining = c.remaining - 1;
                 if (remaining > 0) return { ...c, remaining };
-                // completed current time slice or CPU burst
+
+                // --- AWAL PERBAIKAN BUG ROUND ROBIN ---
                 const pid = c.running;
                 const p = findProc(pid);
-                // advance ip if current instruction was CPU
                 const curInst = p.instructions[p.ip];
+
+                // Cek apakah instruksi sekarang adalah CPU
+                if (curInst && curInst.type === 'CPU') {
+                    // Hitung berapa lama kita baru saja berjalan
+                    // (Untuk RR, ini biasanya sama dengan Quantum, kecuali sisa durasi lebih kecil)
+                    const timeExecuted = (algorithm === 'RR') ? Math.min(curInst.duration, quantum) : curInst.duration;
+                    
+                    // Hitung sisa durasi instruksi sebenarnya
+                    const realRemaining = curInst.duration - timeExecuted;
+
+                    if (realRemaining > 0) {
+                         // KASUS RR: Waktu Quantum habis, tapi instruksi belum kelar.
+                         // 1. Update durasi instruksi di state proses menjadi sisa waktu
+                         setProcesses((ps) => ps.map((pr) => {
+                            if (pr.id === pid) {
+                                const newInstructions = [...pr.instructions];
+                                newInstructions[pr.ip] = { ...curInst, duration: realRemaining };
+                                return { ...pr, instructions: newInstructions, state: 'ready', remaining: 0 };
+                            }
+                            return pr;
+                         }));
+                         
+                         // 2. Masukkan kembali ke Ready Queue (Preemption)
+                         setReadyQueue((rq) => [...rq, pid]);
+                         setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} Quantum habis, sisa burst ${realRemaining}. Kembali ke Ready Queue.`]);
+                         
+                         return { running: null, remaining: 0 };
+                    }
+                }
+                // --- AKHIR PERBAIKAN BUG ---
+
+                // Jika sampai sini, berarti instruksi benar-benar selesai (atau bukan instruksi CPU)
+                // Lanjutkan dengan logika asli untuk pindah IP (nextIp)...
+                
                 let nextIp = p.ip;
                 if (curInst && curInst.type === 'CPU') nextIp = p.ip + 1;
 
                 const nextInst = p.instructions[nextIp];
+                
+                // ... (Lanjutkan dengan sisa kode asli Anda mulai dari: setProcesses((ps) => ps.map... ) ...
+                
+                // Update proses ke idle sementara
+                 setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, ip: nextIp, remaining: 0, state: 'idle' } : pr)));
+                 setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} menyelesaikan CPU burst.`]);
 
-                // update process ip and set to idle temporarily
-                setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, ip: nextIp, remaining: 0, state: 'idle' } : pr)));
-                setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} menyelesaikan CPU burst.`]);
-
-                // handle next instruction
-                if (!nextInst || nextInst.type === 'END') {
+                 // Handle instruction END, LOCK, UNLOCK, CPU seperti kode asli...
+                 if (!nextInst || nextInst.type === 'END') {
+                    // ... (kode asli)
                     setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, state: 'finished' } : pr)));
                     setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} selesai.`]);
                     return { running: null, remaining: 0 };
-                }
-
-                if (nextInst.type === 'LOCK') {
-                    const r = nextInst.resource;
+                 }
+                 
+                 if (nextInst.type === 'LOCK') {
+                    // ... (kode asli)
+                     const r = nextInst.resource;
                     if (!resourcesRef.current[r]) {
-                        // resource free: lock immediately
                         setResources((res) => ({ ...res, [r]: pid }));
-                        // advance ip to after LOCK and enqueue to ready for next CPU
                         setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, ip: nextIp + 1, state: 'ready' } : pr)));
                         setReadyQueue((rq) => [...rq, pid]);
                         setLog((l) => [...l, `T=${timeRef.current + 1}: Resource ${r} bebas. ${pid} meng-LOCK Resource ${r}.`]);
                     } else {
-                        // resource held: block the process
                         blockOn(pid, r);
                     }
                     return { running: null, remaining: 0 };
-                }
+                 }
 
-                if (nextInst.type === 'UNLOCK') {
+                 if (nextInst.type === 'UNLOCK') {
+                    // ... (kode asli)
                     const r = nextInst.resource;
                     setResources((res) => {
                         const newRes = { ...res, [r]: null };
                         setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} melakukan UNLOCK Resource ${r}.`]);
-                        // wake first blocked waiter for r
                         tryWake(r);
                         return newRes;
                     });
-                    // advance ip and enqueue ready
                     setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, ip: nextIp + 1, state: 'ready' } : pr)));
                     setReadyQueue((rq) => [...rq, pid]);
                     return { running: null, remaining: 0 };
-                }
+                 }
 
-                if (nextInst.type === 'CPU') {
-                    // enqueue for next CPU burst
+                 if (nextInst.type === 'CPU') {
+                    // ... (kode asli)
                     setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, state: 'ready', ip: nextIp } : pr)));
                     setReadyQueue((rq) => [...rq, pid]);
                     return { running: null, remaining: 0 };
-                }
+                 }
 
-                return { running: null, remaining: 0 };
+                 return { running: null, remaining: 0 };
             });
         }
 

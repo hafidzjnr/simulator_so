@@ -1,0 +1,82 @@
+.gantt-chart-container {
+  padding: 16px;
+  background: #fff;
+}
+
+.gantt-chart-container h2 {
+  margin-top: 0;
+}
+
+/* Wrapper ini penting untuk scrolling horizontal */
+.gantt-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 400px; /* Opsional: jika proses sangat banyak */
+  overflow-y: auto;   /* Opsional */
+}
+
+.gantt-scroll-wrapper table {
+  border-collapse: collapse;
+  /* Layout fixed agar lebar kolom konsisten */
+  table-layout: fixed; 
+  width: auto; /* Biarkan tabel melebar sesuai konten */
+}
+
+.gantt-scroll-wrapper th {
+  border: 1px solid #eee;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 0.9rem;
+  background: #f0f0f0;
+}
+
+/* Style untuk kolom header (Proses) dan kolom nama proses */
+.process-header-cell,
+.process-name-cell {
+  /* Membuat kolom pertama "menempel" saat di-scroll */
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #f9f9f9;
+  padding: 8px;
+  min-width: 70px;
+  font-weight: bold;
+  border-right: 2px solid #ccc;
+}
+
+/* Header untuk Waktu (T=0, T=1, ...) */
+.time-header-cell {
+  min-width: 40px; /* Lebar minimum untuk setiap blok waktu */
+}
+
+/* Sel untuk blok state Gantt */
+.gantt-cell {
+  border: 1px solid #f0f0f0;
+  width: 40px; /* Samakan dengan lebar header waktu */
+  height: 30px; /* Tinggi baris yang konsisten */
+  padding: 0;
+  /* Transisi untuk perubahan warna (opsional) */
+  transition: background-color 0.3s ease;
+}
+
+/*
+ * WARNA UNTUK SETIAP STATE
+ */
+.gantt-cell.state-running {
+  background-color: #4CAF50; /* Hijau */
+}
+.gantt-cell.state-ready {
+  background-color: #FFEB3B; /* Kuning */
+}
+.gantt-cell.state-blocked {
+  background-color: #F44336; /* Merah */
+}
+.gantt-cell.state-finished,
+.gantt-cell.state-idle {
+  background-color: #BDBDBD; /* Abu-abu */
+}
+.gantt-cell.state-new {
+  background-color: #FFFFFF; /* Putih/Kosong */
+}

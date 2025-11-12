@@ -4,6 +4,7 @@ import Timeline from './Timeline';
 import ResourceView from './ResourceView';
 import AddProcessForm from './AddProcessForm';
 import Controls from './Controls';
+import GanttChart from './GanttChart';
 import { useScheduler } from '../hooks/useScheduler';
 import '../src/styles/Scheduler.css';
 
@@ -19,6 +20,7 @@ const Scheduler = () => {
         setAlgorithm,
         log,
         addProcess,
+        gantt,
     } = useScheduler();
 
     const schedulingAlgorithms = ['FCFS', 'RR', 'PRIORITY', 'SJF'];
@@ -61,6 +63,10 @@ const Scheduler = () => {
             </div>
 
             <div className="scheduler-col-2">
+                <div className="gantt-chart panel">
+                    <GanttChart ganttData={gantt} processes={processes} />
+                </div>
+
                 <div className="timline panel">
                     <Timeline events={timelineEvents}/>
                 </div>

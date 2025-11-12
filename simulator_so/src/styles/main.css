@@ -79,10 +79,18 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+
 body { font-family: Arial, Helvetica, sans-serif; margin: 12px; background: #f7f9fb; }
 .app-container { max-width: 1100px; margin: 0 auto; }
 .scheduler { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.panel { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fff; }
+.panel { 
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
 .controls button { margin-right: 8px; }
 .queue { margin-top: 8px; }
 .chip { display: inline-block; padding: 6px 10px; margin: 4px; border-radius: 4px; }

@@ -1,53 +1,99 @@
-/* Basic styles for the Scheduler component and its child components */
-.scheduler {
+
+.scheduler-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr 1.5fr; /* Kolom kiri lebih kecil */
+  gap: 16px;
   align-items: start;
+  margin-top: 16px;
+}
+
+.scheduler-col-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.scheduler-col-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .controls {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.resource-view {
-  padding: 8px;
+/* --- GAYA UNTUK FORM BARU --- */
+.add-process-form h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
 }
-
-.process-list {
-  padding: 8px;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
 }
+.form-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+}
+.form-group input,
+.form-group textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 1rem;
+}
+.form-group textarea {
+    resize: vertical;
+}
+.add-process-form button {
+    width: 100%;
+}
+/* --- AKHIR GAYA FORM --- */
 
+
+
+.resource-view,
+.process-list,
 .timeline {
-  padding: 8px;
+  padding: 0;
 }
 
-.timeline-container {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.resource-view ul {
+    list-style: none;
+    padding: 0;
 }
 
-.gantt {
-  max-height: 220px;
-  overflow: auto;
+.process-list ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.log {
-  max-height: 160px;
-  overflow: auto;
-  margin-top: 8px;
+/* Buat ProcessList terlihat lebih baik */
+.process-list li {
+    padding: 10px;
+    background: #f7f7f7;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+.process-list li span:first-child {
+    font-weight: bold;
 }
 
-.queue { margin-top: 8px; }
-.chip { display:inline-block; padding:6px 10px; margin:4px; border-radius:4px; }
-.chip.ready { background:#ffeb3b }
-.chip.blocked { background:#f44336; color:#fff }
 
-/* small responsive tweak */
+/* Tweak responsif */
 @media (max-width: 800px) {
-  .scheduler { grid-template-columns: 1fr; }
+  .scheduler-layout { grid-template-columns: 1fr; }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import ProcessList from './ProcessList';
 import Timeline from './Timeline';
 import ResourceView from './ResourceView';
+import AddProcessForm from './AddProcessForm';
 import Controls from './Controls';
 import { useScheduler } from '../hooks/useScheduler';
 import '../src/styles/Scheduler.css';
@@ -17,6 +18,7 @@ const Scheduler = () => {
         algorithm,
         setAlgorithm,
         log,
+        addProcess,
     } = useScheduler();
 
     const schedulingAlgorithms = ['FCFS', 'RR', 'PRIORITY', 'SJF'];
@@ -35,21 +37,36 @@ const Scheduler = () => {
     });
 
     return (
-        <div className="scheduler">
-            <h1>Process Scheduler Simulation</h1>
-            <Controls
-                onPlay={startSimulation}  // Langsung gunakan fungsi dari hook
-                onPause={pauseSimulation} // Langsung gunakan fungsi dari hook
-                onStep={stepSimulation}
-                onReset={resetSimulation} // Langsung gunakan fungsi dari hook
-                schedulingAlgorithms={schedulingAlgorithms}
-                selectedAlgorithm={algorithm}
-                onAlgorithmChange={(alg) => setAlgorithm(alg)}
-            />
-            <ResourceView resources={resourceList} />
-            <ProcessList processes={processes} />
-            <Timeline events={timelineEvents} />
+    <div className="scheduler-wrapper">
+        <h1>Process Scheduler Simulation</h1>
+        <Controls
+            onPlay={startSimulation}  // Langsung gunakan fungsi dari hook
+            onPause={pauseSimulation} // Langsung gunakan fungsi dari hook
+            onStep={stepSimulation}
+            onReset={resetSimulation} // Langsung gunakan fungsi dari hook
+            schedulingAlgorithms={schedulingAlgorithms}
+            selectedAlgorithm={algorithm}
+            onAlgorithmChange={(alg) => setAlgorithm(alg)}
+        />
+
+        <div className="scheduler-layout">
+            <div className="scheduler-col-1">
+                    <AddProcessForm onProcessSubmit={addProcess} />
+                <div className="Resource-view panel">
+                    <ResourceView resources={resourceList}/>
+                </div>
+                <div className="process-list panel">
+                    <ProcessList processes={processes}/>
+                </div>
+            </div>
+
+            <div className="scheduler-col-2">
+                <div className="timline panel">
+                    <Timeline events={timelineEvents}/>
+                </div>
+            </div>
         </div>
+    </div>
     );
 };
 

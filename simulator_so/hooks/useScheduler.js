@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import AddProcessForm from '../components/AddProcessForm';
 
 // Full-featured scheduler hook
 // - Processes have instructions: [{type: 'CPU'|'LOCK'|'UNLOCK'|'END', duration?, resource?}]
@@ -333,6 +334,8 @@ export function useScheduler(initialProcs) {
                     return { running: null, remaining: 0 };
                  }
 
+                 
+
                  return { running: null, remaining: 0 };
             });
         }
@@ -370,6 +373,33 @@ export function useScheduler(initialProcs) {
         setGantt([]);
         }, [pauseSimulation, defaultProcs]);
 
+    // Di dalam file: hooks/useScheduler.js
+
+// ... (sisipkan ini SEBELUM 'return { ... }' di akhir file) ...
+
+    const addProcess = useCallback((newProcess) => {
+        // Cek duplikat ID
+        if (processesRef.current.find(p => p.id === newProcess.id)) {
+            alert(`Error: Process ID ${newProcess.id} sudah ada.`);
+            return;
+        }
+
+        // Siapkan proses baru dengan state awal
+        const processWithState = {
+            ...newProcess,
+            ip: 0, // Instruction Pointer awal
+            remaining: 0,
+            state: 'ready', // Langsung masuk 'ready'
+        };
+
+        setProcesses((ps) => [...ps, processWithState]);
+        setReadyQueue((rq) => [...rq, newProcess.id]);
+        setLog((l) => [
+            ...l,
+            `T=${timeRef.current}: ${newProcess.id} (priority=${newProcess.priority}) tiba, masuk Ready Queue.`,
+        ]);
+    }, []); // dependensi kosong aman karena hanya menggunakan refs dan setters
+
     // expose API
     return {
         processes,
@@ -388,7 +418,9 @@ export function useScheduler(initialProcs) {
         setQuantum,
         gantt,
         log,
+        addProcess, // <-- TAMBAHKAN INI
     };
 }
+
 
 export default useScheduler;

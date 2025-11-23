@@ -1,0 +1,232 @@
+/* ============================
+   RESOURCE STATUS - WRAPPER
+============================ */
+
+.resource-view {
+  padding: 28px 32px;
+}
+
+/* Title */
+.resource-view h2 {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+}
+
+/* List */
+.resource-view ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Resource Card */
+.resource-view li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover */
+.resource-view li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+  background: #ffffff;
+}
+
+/* Left content (icon + name) */
+.resource-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Colored status dot */
+.resource-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* AVAILABLE = green */
+.resource-dot.available {
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+/* HELD = red */
+.resource-dot.busy {
+  background: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+/* PENDING = yellow */
+.resource-dot.pending {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+}
+
+/* Strong label */
+.resource-name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+/* Status badge */
+.resource-status-badge {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.3s ease;
+}
+
+/* Badge coloring */
+.resource-status-badge.available {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #065f46;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.resource-status-badge.busy {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.resource-status-badge.pending {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+/* Resource info (additional details) */
+.resource-info {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+============================ */
+
+@media (max-width: 1200px) {
+  .resource-view {
+    padding: 24px 28px;
+  }
+
+  .resource-view h2 {
+    font-size: 24px;
+  }
+
+  .resource-view li {
+    padding: 18px 22px;
+  }
+
+  .resource-name {
+    font-size: 17px;
+  }
+
+  .resource-status-badge {
+    font-size: 15px;
+    padding: 7px 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .resource-view {
+    padding: 20px 24px;
+  }
+
+  .resource-view h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .resource-view ul {
+    gap: 16px;
+  }
+
+  .resource-view li {
+    padding: 18px 20px;
+    border-radius: 18px;
+  }
+
+  .resource-left {
+    gap: 14px;
+  }
+
+  .resource-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .resource-name {
+    font-size: 16px;
+  }
+
+  .resource-status-badge {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .resource-view {
+    padding: 16px 20px;
+  }
+
+  .resource-view h2 {
+    font-size: 20px;
+  }
+
+  .resource-view li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+  }
+
+  .resource-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .resource-status-badge {
+    align-self: flex-start;
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+
+  .resource-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .resource-name {
+    font-size: 15px;
+  }
+}

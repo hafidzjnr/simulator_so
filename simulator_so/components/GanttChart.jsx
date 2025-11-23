@@ -1,5 +1,7 @@
 import React from "react";
 import '../src/styles/GanttChart.css'
+import '../src/styles/scheduler.css'
+
 
 const getStateClass = (state) => {
   switch (state) {
@@ -31,8 +33,8 @@ const GanttChart = ({ ganttData, processes })=> {
   const timePoints = ganttData.map(d => d.t);
 
   return (
-    <div className="gantt-chart-container panel">
-      <h2>Gant Chart</h2>
+    <div className="gantt-chart-container">
+      <h2>Gantt Chart</h2>
       <div className="gantt-scroll-wrapper">
         <table>
           <thead>

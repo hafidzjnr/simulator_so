@@ -3,7 +3,7 @@ import Scheduler from '../components/Scheduler'
 
 const SimulatorPage = () => {
   return (
-    <div className="simulator-page-contaier">
+    <div className="simulator-page-container">
       <Scheduler />
     </div>
   )

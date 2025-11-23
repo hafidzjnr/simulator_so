@@ -1,82 +1,275 @@
+/* =========================
+   GANTT CHART CONTAINER
+   ========================= */
+
 .gantt-chart-container {
-  padding: 16px;
-  background: #fff;
+  padding: 28px 32px;
+  background: transparent;
 }
 
 .gantt-chart-container h2 {
-  margin-top: 0;
+  margin: 0 0 20px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.3px;
 }
 
-/* Wrapper ini penting untuk scrolling horizontal */
+/* =========================
+   SCROLL WRAPPER
+   ========================= */
+
 .gantt-scroll-wrapper {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  max-height: 400px; /* Opsional: jika proses sangat banyak */
-  overflow-y: auto;   /* Opsional */
+  overflow-y: auto;
+  max-height: 480px;
+  border-radius: 20px;
+  border: 1px solid #e3eaf3;
+  background: #f7fafc;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  -webkit-overflow-scrolling: touch;
+  transition: all 0.3s ease;
 }
+
+.gantt-scroll-wrapper:hover {
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.gantt-scroll-wrapper::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.gantt-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.8);
+  border-radius: 0 0 20px 20px;
+}
+
+.gantt-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  border-radius: 999px;
+  border: 2px solid rgba(241, 245, 249, 0.8);
+}
+
+.gantt-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c8ba1, #475569);
+}
+
+/* =========================
+   TABLE
+   ========================= */
 
 .gantt-scroll-wrapper table {
   border-collapse: collapse;
-  /* Layout fixed agar lebar kolom konsisten */
-  table-layout: fixed; 
-  width: auto; /* Biarkan tabel melebar sesuai konten */
+  table-layout: auto;
+  width: max-content;
+  white-space: nowrap;
+  font-size: 16px;
+}
+
+.gantt-scroll-wrapper thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .gantt-scroll-wrapper th {
-  border: 1px solid #eee;
-  padding: 8px 4px;
+  border: 1px solid #e5ecf5;
+  padding: 14px 12px;
   text-align: center;
-  font-size: 0.9rem;
-  background: #f0f0f0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  background: linear-gradient(180deg, #e5f0ff 0%, #dbeafe 100%);
+  letter-spacing: 0.2px;
 }
 
-/* Style untuk kolom header (Proses) dan kolom nama proses */
 .process-header-cell,
 .process-name-cell {
-  /* Membuat kolom pertama "menempel" saat di-scroll */
   position: sticky;
   left: 0;
-  z-index: 1;
-  background: #f9f9f9;
-  padding: 8px;
-  min-width: 70px;
-  font-weight: bold;
-  border-right: 2px solid #ccc;
+  z-index: 3;
+  background: #f9fafb;
+  padding: 14px 16px;
+  min-width: 120px;
+  font-weight: 600;
+  color: #0f172a;
+  border-right: 2px solid #d1d5db;
+  font-size: 16px;
 }
 
-/* Header untuk Waktu (T=0, T=1, ...) */
 .time-header-cell {
-  min-width: 40px; /* Lebar minimum untuk setiap blok waktu */
+  min-width: 60px;
 }
 
-/* Sel untuk blok state Gantt */
+/* =========================
+   CELL
+   ========================= */
+
 .gantt-cell {
-  border: 1px solid #f0f0f0;
-  width: 40px; /* Samakan dengan lebar header waktu */
-  height: 30px; /* Tinggi baris yang konsisten */
+  border: 1px solid #eef2f7;
+  width: 60px;
+  height: 48px;
   padding: 0;
-  /* Transisi untuk perubahan warna (opsional) */
-  transition: background-color 0.3s ease;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-/*
- * WARNA UNTUK SETIAP STATE
- */
-.gantt-cell.state-running {
-  background-color: #4CAF50; /* Hijau */
+.gantt-scroll-wrapper tbody tr:nth-child(odd) .gantt-cell {
+  background: #f9fbfd;
 }
-.gantt-cell.state-ready {
-  background-color: #FFEB3B; /* Kuning */
+
+.gantt-cell:hover {
+  background: #e0f2fe;
+  box-shadow: inset 0 0 0 2px #60a5fa;
+  transform: scale(1.05);
+  z-index: 1;
 }
-.gantt-cell.state-blocked {
-  background-color: #F44336; /* Merah */
+
+/* =========================
+   CELL STATES (Process Colors)
+   ========================= */
+
+.gantt-cell.process-running {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
-.gantt-cell.state-finished,
-.gantt-cell.state-idle {
-  background-color: #BDBDBD; /* Abu-abu */
+
+.gantt-cell.process-waiting {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  font-weight: 600;
 }
-.gantt-cell.state-new {
-  background-color: #FFFFFF; /* Putih/Kosong */
+
+.gantt-cell.process-blocked {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 600;
+}
+
+.gantt-cell.process-finished {
+  background: linear-gradient(135deg, #10b981, #047857);
+  color: white;
+  font-weight: 600;
+}
+
+/* =========================
+   RESPONSIVE GANTT CHART
+   ========================= */
+
+@media (max-width: 1200px) {
+  .gantt-chart-container {
+    padding: 24px 28px;
+  }
+
+  .gantt-chart-container h2 {
+    font-size: 24px;
+  }
+
+  .gantt-scroll-wrapper {
+    max-height: 420px;
+  }
+
+  .gantt-scroll-wrapper th {
+    padding: 12px 10px;
+    font-size: 15px;
+  }
+
+  .process-header-cell,
+  .process-name-cell {
+    padding: 12px 14px;
+    min-width: 100px;
+    font-size: 15px;
+  }
+
+  .gantt-cell {
+    width: 52px;
+    height: 42px;
+  }
+
+  .time-header-cell {
+    min-width: 52px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gantt-chart-container {
+    padding: 20px 24px;
+  }
+
+  .gantt-chart-container h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .gantt-scroll-wrapper {
+    max-height: 360px;
+    border-radius: 16px;
+  }
+
+  .gantt-scroll-wrapper table {
+    font-size: 14px;
+  }
+
+  .gantt-scroll-wrapper th {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+
+  .process-header-cell,
+  .process-name-cell {
+    padding: 10px 12px;
+    min-width: 90px;
+    font-size: 14px;
+  }
+
+  .gantt-cell {
+    width: 46px;
+    height: 38px;
+  }
+
+  .time-header-cell {
+    min-width: 46px;
+  }
+}
+
+@media (max-width: 640px) {
+  .gantt-chart-container {
+    padding: 16px 0;
+  }
+
+  .gantt-chart-container h2 {
+    font-size: 20px;
+  }
+
+  .gantt-scroll-wrapper {
+    max-height: 300px;
+  }
+
+  .gantt-scroll-wrapper th {
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+
+  .gantt-cell {
+    width: 40px;
+    height: 32px;
+  }
+
+  .time-header-cell {
+    min-width: 40px;
+  }
+
+  .process-header-cell,
+  .process-name-cell {
+    padding: 8px 10px;
+    min-width: 80px;
+    font-size: 13px;
+  }
 }

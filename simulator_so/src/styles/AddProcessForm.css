@@ -1,0 +1,312 @@
+/* ============================
+   Panel dasar AddProcessForm
+============================ */
+.add-process-form {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+  padding: 32px 36px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-process-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-size: 200% 100%;
+}
+
+.add-process-form:hover {
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.add-process-form h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.add-process-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-process-form label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.2px;
+}
+
+.add-process-form input,
+.add-process-form textarea,
+.add-process-form select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+  letter-spacing: 0.2px;
+}
+
+.add-process-form input:focus,
+.add-process-form textarea:focus,
+.add-process-form select:focus {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15),
+    0 8px 25px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.add-process-form input:hover,
+.add-process-form textarea:hover,
+.add-process-form select:hover {
+  border-color: #9ca3af;
+  background: #ffffff;
+}
+
+.add-process-form textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+.add-process-form select option {
+  padding: 12px;
+  font-size: 15px;
+  background: white;
+  color: #1f2937;
+}
+
+/* Form row untuk input berdampingan */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.add-process-form button[type="submit"] {
+  margin-top: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 18px 32px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-process-form button[type="submit"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.add-process-form button[type="submit"]:hover::before {
+  left: 100%;
+}
+
+.add-process-form button[type="submit"]:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.5);
+}
+
+.add-process-form button[type="submit"]:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.add-process-form button[type="submit"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3),
+    0 12px 30px rgba(59, 130, 246, 0.4);
+}
+
+/* Icon di dalam tombol */
+.submit-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.add-process-form button[type="submit"]:hover .submit-icon {
+  transform: translateX(3px);
+}
+
+/* Form validation styles */
+.add-process-form input:invalid:not(:focus):not(:placeholder-shown),
+.add-process-form textarea:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.add-process-form input:valid:not(:focus):not(:placeholder-shown),
+.add-process-form textarea:valid:not(:focus):not(:placeholder-shown) {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+/* Loading state */
+.add-process-form button[type="submit"].loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.add-process-form button[type="submit"].loading .submit-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+============================ */
+
+@media (max-width: 1200px) {
+  .add-process-form {
+    padding: 28px 32px 32px;
+    gap: 18px;
+  }
+
+  .add-process-form h3 {
+    font-size: 22px;
+  }
+
+  .add-process-form input,
+  .add-process-form textarea,
+  .add-process-form select {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  .add-process-form button[type="submit"] {
+    padding: 16px 28px;
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-process-form {
+    padding: 24px 28px 28px;
+    border-radius: 20px;
+    gap: 16px;
+  }
+
+  .add-process-form h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .add-process-form input,
+  .add-process-form textarea,
+  .add-process-form select {
+    padding: 12px 16px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  .add-process-form textarea {
+    min-height: 100px;
+  }
+
+  .add-process-form button[type="submit"] {
+    padding: 14px 24px;
+    font-size: 16px;
+    border-radius: 14px;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .add-process-form {
+    padding: 20px 24px 24px;
+    border-radius: 18px;
+    gap: 14px;
+  }
+
+  .add-process-form h3 {
+    font-size: 18px;
+  }
+
+  .add-process-form label {
+    font-size: 15px;
+  }
+
+  .add-process-form input,
+  .add-process-form textarea,
+  .add-process-form select {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .add-process-form textarea {
+    min-height: 80px;
+  }
+
+  .add-process-form button[type="submit"] {
+    padding: 12px 20px;
+    font-size: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+
+  .submit-icon {
+    font-size: 18px;
+  }
+}

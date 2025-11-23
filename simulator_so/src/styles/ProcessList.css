@@ -1,0 +1,199 @@
+/* ============================
+   PROCESS LIST - WRAPPER
+============================ */
+.process-list {
+  width: 100%;
+}
+
+/* Title */
+.process-list h2 {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+}
+
+/* List reset */
+.process-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Process Card */
+.process-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 28px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent strip on left */
+.process-list li {
+  border-left: 8px solid #3b82f6;
+}
+
+/* Hover effect */
+.process-list li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+  background: #ffffff;
+}
+
+/* Text styling inside card */
+.process-list li span {
+  font-size: 18px;
+  color: #475569;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+/* Strong label */
+.process-list li span strong {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 19px;
+}
+
+/* Process ID highlight */
+.process-list li span:first-child {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 4px;
+}
+
+/* Status indicator */
+.process-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px 16px;
+  border-radius: 0 20px 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  color: white;
+}
+
+/* Different status colors */
+.process-status.ready {
+  background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.process-status.running {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.process-status.blocked {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.process-status.finished {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+============================ */
+
+@media (max-width: 1200px) {
+  .process-list h2 {
+    font-size: 24px;
+  }
+
+  .process-list li {
+    padding: 22px 24px;
+    gap: 10px;
+  }
+
+  .process-list li span {
+    font-size: 17px;
+  }
+
+  .process-list li span strong {
+    font-size: 18px;
+  }
+
+  .process-list li span:first-child {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 768px) {
+  .process-list h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .process-list ul {
+    gap: 20px;
+  }
+
+  .process-list li {
+    padding: 20px 22px;
+    border-radius: 18px;
+    border-left-width: 6px;
+  }
+
+  .process-list li span {
+    font-size: 16px;
+  }
+
+  .process-list li span strong {
+    font-size: 17px;
+  }
+
+  .process-list li span:first-child {
+    font-size: 18px;
+  }
+
+  .process-status {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 0 18px 0 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .process-list h2 {
+    font-size: 20px;
+  }
+
+  .process-list li {
+    padding: 18px 20px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .process-list li span {
+    font-size: 15px;
+  }
+
+  .process-list li span strong {
+    font-size: 16px;
+  }
+
+  .process-list li span:first-child {
+    font-size: 17px;
+  }
+
+  .process-status {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 0 16px 0 8px;
+  }
+}

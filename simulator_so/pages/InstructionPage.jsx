@@ -20,7 +20,11 @@ const InstructionPage = () => {
         </li>
         <li>
           <strong>Definisikan Instruksi</strong>
-          <p>Setiap proses memiliki instruksi: CPU (eksekusi), LOCK (ambil sumber daya), dan UNLOCK (lepas sumber daya)</p>
+          <p>Setiap proses memiliki instruksi: CPU (eksekusi), LOCK (ambil sumber daya), dan UNLOCK (lepas sumber daya).</p>
+        </li>
+        <li>
+          <strong>Jalankan Simulasi</strong>
+          <p>Gunakan tombol Play untuk menjalankan simulasi otomatis, atau Step untuk maju per detik. Amati pergerakan proses di antrian dan status sumber daya.</p>
         </li>
         <li>
           <strong>Analisis Gantt Chart</strong>
@@ -30,11 +34,24 @@ const InstructionPage = () => {
           <strong>Pahami Log Sistem</strong>
           <p>Baca Log di panel kanan untuk memahami setiap kejadian.</p>
         </li>
+        <li>
+          <strong>Coba Skenario Khusus</strong>
+          <p>Eksperimen dengan deadlock (P1: LOCK A → LOCK B, P2: LOCK B → LOCK A) atau priority inversion dengan priority inheritance.</p>
+        </li>
       </ol>
 
-      <Link to="/simulator" className="btn btn-primary">
-        Lanjutkan ke Simulator
-      </Link>
+      <div className="continue-card">
+  <div className="continue-text">
+    <h4>Lanjutkan ke Simulator</h4>
+    <p>Baca panduan atau langsung coba simulator</p>
+  </div>
+
+  <Link to="/simulator" className="continue-button">
+    <span>Buka Simulator</span>
+    <span className="continue-arrow">→</span>
+  </Link>
+</div>
+
     </div>
   )
 }

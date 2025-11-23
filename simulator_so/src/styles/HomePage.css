@@ -1,107 +1,506 @@
+/* ============================
+   Background & layout umum
+=============================== */
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: radial-gradient(
+      circle at 0% 0%,
+      rgba(191, 219, 254, 0.9) 0,
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(248, 250, 252, 1) 0,
+      transparent 55%
+    ),
+    linear-gradient(180deg, #dbeafe 0%, #eef2ff 45%, #ffffff 100%);
+}
+
 .home-container {
-    padding: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
+  margin: 60px auto 90px;
+  padding: 48px;
+}
+
+.app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 1600px;
+  width: 100%;
+  margin: auto;
+  padding: 32px 48px;
+  border-radius: 24px;
+}
+
+/* ============================
+   HERO: teks kiri, ilustrasi kanan
+=============================== */
+
+.home-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 64px;
+  margin-bottom: 90px;
 }
 
 .home-header {
-    text-align: center;
-    margin-bottom: 60px;
-    padding: 40px;
-    background: linear-gradient(135deg, #6b8dd6 0%, #8e37d7 100%);
-    border-radius: 12px;
-    color: white;
+  flex: 1 1 0;
+  max-width: 680px;
 }
 
 .home-header h1 {
-    font-size: 3em;
-    margin-bottom: 20px;
-    color: white;
+  margin: 0 0 24px;
+  font-size: 52px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #020617;
+  letter-spacing: -0.5px;
 }
 
 .home-header p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-    line-height: 1.6;
+  margin: 0 0 36px;
+  font-size: 20px;
+  line-height: 1.7;
+  color: #475569;
+  letter-spacing: 0.2px;
 }
 
 .home-button {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
+  display: flex;
+  gap: 24px;
+  align-items: center;
 }
 
 .btn {
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1.1em;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.2s;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    text-decoration: none;
+  display: inline-flex;
+  padding: 16px 36px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background-color 0.25s ease, color 0.25s ease;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary {
-    background-color: #4CAF50;
-    color: white;
+  background: #a1cdff;
+  color: #000000;
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.4);
+  display: block;
+  width: fit-content;
+  min-width: 180px;
+}
+
+.btn-primary:hover {
+  background: #91b8e6;
+  transform: translateY(-3px);
+  box-shadow: 0 24px 40px rgba(37, 99, 235, 0.5);
+  text-decoration: none;
 }
 
 .btn-secondary {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    backdrop-filter: blur(5px);
+  background: #e0edff;
+  color: #1d4ed8;
+  box-shadow: 0 14px 30px rgba(148, 163, 184, 0.35);
+  min-width: 160px;
 }
 
+.btn-secondary:hover {
+  background: #d0e2ff;
+  color: #1e3a8a;
+  transform: translateY(-3px);
+  box-shadow: 0 20px 35px rgba(148, 163, 184, 0.45);
+}
+
+.home-hero-graphic {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 60px;
+}
+
+.home-hero-graphic img {
+  width: 380px;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.9;
+  transform: translateX(20px);
+}
+
+/* ============================
+   FEATURES: 3 kartu
+=============================== */
+
 .home-features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 60px;
+  display: flex;
+  gap: 40px;
+  margin-bottom: 80px;
+  flex-wrap: wrap;
 }
 
 .feature-card {
-    padding: 30px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+  flex: 1 1 0;
+  min-width: 320px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px 28px 28px;
+  border: 1px solid #e5e7eb;
+  box-shadow: -6px 6px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background-color 0.25s ease;
 }
 
 .feature-card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25),
+    0 0 24px rgba(59, 130, 246, 0.3), -8px -8px 24px rgba(255, 255, 255, 0.95);
+  background: linear-gradient(160deg, #ffffff 0%, #e9f3ff 55%, #def2ff 100%);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  display: flex;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.feature-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .feature-card h3 {
-    color: #2196F3;
-    margin-bottom: 15px;
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #020617;
+  letter-spacing: 0.3px;
 }
 
+.feature-card p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #4b5563;
+  letter-spacing: 0.2px;
+}
+
+/* ============================
+   KONSEP YANG DIPELAJARI
+=============================== */
+
 .home-concepts {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  padding: 48px 72px 52px;
+  background: #ffffff;
+  border-radius: 32px;
+  border: 1px solid #e5e7eb;
+  box-shadow: -6px 6px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.home-concepts:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25),
+    0 0 24px rgba(59, 130, 246, 0.3), -8px -8px 24px rgba(255, 255, 255, 0.95);
+  background: linear-gradient(160deg, #ffffff 0%, #e9f3ff 55%, #def2ff 100%);
 }
 
 .home-concepts h2 {
-    color: #2196F3;
-    margin-bottom: 20px;
+  margin: 0 0 36px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #020617;
+  letter-spacing: 0.5px;
 }
 
-.home-concepts ul {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 120px;
+  row-gap: 40px;
 }
 
-.home-concepts li {
-    padding: 10px;
-    background: #f5f5f5;
-    border-radius: 5px;
+.concept-column {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.concept-item {
+  position: relative;
+  padding-left: 32px;
+}
+
+.concept-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.concept-item h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #020617;
+  letter-spacing: 0.3px;
+}
+
+.concept-item p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #4b5563;
+  letter-spacing: 0.2px;
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+=============================== */
+
+@media (max-width: 1200px) {
+  .home-container {
+    margin: 50px auto 70px;
+    padding: 40px;
+  }
+
+  .app-container {
+    padding: 28px 40px;
+  }
+
+  .home-hero {
+    gap: 48px;
+    margin-bottom: 70px;
+  }
+
+  .home-header h1 {
+    font-size: 44px;
+  }
+
+  .home-header p {
+    font-size: 18px;
+  }
+
+  .home-hero-graphic img {
+    width: 320px;
+  }
+}
+
+@media (max-width: 960px) {
+  .home-container {
+    margin: 40px auto 60px;
+    padding: 32px 0;
+  }
+
+  .app-container {
+    padding: 24px 32px;
+  }
+
+  .home-hero {
+    flex-direction: column;
     text-align: center;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+
+  .home-header {
+    max-width: 90%;
+  }
+
+  .home-header h1 {
+    font-size: 38px;
+  }
+
+  .home-header p {
+    font-size: 17px;
+  }
+
+  .home-button {
+    justify-content: center;
+  }
+
+  .home-hero-graphic {
+    order: -1;
+    justify-content: center;
+    padding-right: 0;
+  }
+
+  .home-hero-graphic img {
+    width: 280px;
+    transform: none;
+  }
+
+  .home-features {
+    gap: 32px;
+    margin-bottom: 60px;
+  }
+
+  .feature-card {
+    min-width: 280px;
+    padding: 28px 24px 24px;
+  }
+
+  .home-concepts {
+    padding: 40px 48px 44px;
+  }
+
+  .concept-grid {
+    column-gap: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    margin: 30px auto 50px;
+  }
+
+  .app-container {
+    padding: 20px 24px;
+  }
+
+  .home-header h1 {
+    font-size: 32px;
+  }
+
+  .home-header p {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+
+  .home-hero-graphic img {
+    width: 240px;
+  }
+
+  .home-features {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .feature-card {
+    width: 100%;
+    padding: 24px 20px 20px;
+  }
+
+  .feature-card h3 {
+    font-size: 20px;
+  }
+
+  .feature-card p {
+    font-size: 16px;
+  }
+
+  .home-concepts {
+    padding: 32px 28px 36px;
+  }
+
+  .home-concepts h2 {
+    font-size: 28px;
+  }
+
+  .concept-grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 32px;
+  }
+
+  .concept-column {
+    gap: 28px;
+  }
+
+  .concept-item h3 {
+    font-size: 18px;
+  }
+
+  .concept-item p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-container {
+    margin: 20px auto 40px;
+  }
+
+  .app-container {
+    padding: 16px 20px;
+  }
+
+  .home-header h1 {
+    font-size: 28px;
+  }
+
+  .home-header p {
+    font-size: 15px;
+  }
+
+  .home-button {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .home-hero-graphic img {
+    width: 200px;
+  }
+
+  .feature-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 16px;
+  }
+
+  .feature-icon img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .home-concepts {
+    padding: 24px 20px 28px;
+  }
+
+  .home-concepts h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .concept-item {
+    padding-left: 28px;
+  }
+
+  .concept-item::before {
+    width: 10px;
+    height: 10px;
+    top: 12px;
+  }
 }

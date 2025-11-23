@@ -1,3 +1,4 @@
+import '../src/styles/ResourceView.css';
 import React from 'react';
 
 const ResourceView = ({ resources }) => {

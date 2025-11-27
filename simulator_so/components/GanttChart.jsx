@@ -1,6 +1,6 @@
 import React from "react";
 import '../src/styles/GanttChart.css'
-import '../src/styles/scheduler.css'
+import '../src/styles/Scheduler.css'
 
 
 const getStateClass = (state) => {

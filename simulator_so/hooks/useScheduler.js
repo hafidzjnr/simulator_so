@@ -1,14 +1,11 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import AddProcessForm from '../components/AddProcessForm';
 
-// Full-featured scheduler hook
-// - Processes have instructions: [{type: 'CPU'|'LOCK'|'UNLOCK'|'END', duration?, resource?}]
-// - Resources: A and B (mutex). Each resource holds null or process id.
-// - Queues: readyQueue (array of ids), blockedQueues: { A:[], B:[] }
-// - Scheduler algorithms: FCFS, PRIORITY (lower number = higher), RR (quantum)
-
 export function useScheduler(initialProcs) {
-        const defaultProcs = useMemo(() => initialProcs || [
+    // ============================================================
+    // 1. INISIALISASI DATA PROSES DEFAULT
+    // ============================================================
+    const defaultProcs = useMemo(() => initialProcs || [
         {
             id: 'P1',
             priority: 1,
@@ -32,26 +29,32 @@ export function useScheduler(initialProcs) {
                 { type: 'END' },
             ],
         },
-        ], [initialProcs]);
+    ], [initialProcs]);
 
-    // State
+    // ============================================================
+    // 2. DEFINISI STATE (STATUS SIMULASI)
+    // ============================================================
     const [time, setTime] = useState(0);
+    // State untuk menyimpan daftar proses beserta status dinamisnya (ip = instruction pointer)
     const [processes, setProcesses] = useState(() =>
         defaultProcs.map((p) => ({ ...p, ip: 0, remaining: 0, state: 'new' }))
     );
-    const [readyQueue, setReadyQueue] = useState([]);
-    const [blockedQueues, setBlockedQueues] = useState({ A: [], B: [] });
-    const [resources, setResources] = useState({ A: null, B: null });
-    const [cpu, setCpu] = useState({ running: null, remaining: 0 });
-    const [algorithm, setAlgorithm] = useState('FCFS');
-    const [quantum, setQuantum] = useState(2);
-    const [log, setLog] = useState([]);
-    const [gantt, setGantt] = useState([]);
+    const [readyQueue, setReadyQueue] = useState([]); // Antrian siap jalan
+    const [blockedQueues, setBlockedQueues] = useState({ A: [], B: [] }); // Antrian menunggu resource
+    const [resources, setResources] = useState({ A: null, B: null }); // Status Resource (Mutex)
+    const [cpu, setCpu] = useState({ running: null, remaining: 0 }); // Status CPU saat ini
+    const [algorithm, setAlgorithm] = useState('FCFS'); // Pilihan Algoritma
+    const [quantum, setQuantum] = useState(2); // Time Quantum untuk RR
+    const [log, setLog] = useState([]); // Log aktivitas teks
+    const [gantt, setGantt] = useState([]); // Data visualisasi Gantt Chart
 
     const intervalRef = useRef(null);
     const runningRef = useRef(false);
 
-    // refs for latest state to avoid stale closures
+    // ============================================================
+    // 3. REFS UNTUK MENGHINDARI STALE CLOSURES
+    // (Menyimpan state terbaru agar bisa diakses di dalam interval/callback)
+    // ============================================================
     const processesRef = useRef(processes);
     const readyRef = useRef(readyQueue);
     const blockedRef = useRef(blockedQueues);
@@ -59,27 +62,18 @@ export function useScheduler(initialProcs) {
     const cpuRef = useRef(cpu);
     const timeRef = useRef(time);
 
-    useEffect(() => {
-        processesRef.current = processes;
-    }, [processes]);
-    useEffect(() => {
-        readyRef.current = readyQueue;
-    }, [readyQueue]);
-    useEffect(() => {
-        blockedRef.current = blockedQueues;
-    }, [blockedQueues]);
-    useEffect(() => {
-        resourcesRef.current = resources;
-    }, [resources]);
-    useEffect(() => {
-        cpuRef.current = cpu;
-    }, [cpu]);
-    useEffect(() => {
-        timeRef.current = time;
-    }, [time]);
+    useEffect(() => { processesRef.current = processes; }, [processes]);
+    useEffect(() => { readyRef.current = readyQueue; }, [readyQueue]);
+    useEffect(() => { blockedRef.current = blockedQueues; }, [blockedQueues]);
+    useEffect(() => { resourcesRef.current = resources; }, [resources]);
+    useEffect(() => { cpuRef.current = cpu; }, [cpu]);
+    useEffect(() => { timeRef.current = time; }, [time]);
 
-    // Initialize at t=0: move all to ready
+    // ============================================================
+    // 4. INISIALISASI AWAL PADA T=0
+    // ============================================================
     useEffect(() => {
+        // Pindahkan semua proses default ke state 'ready' dan masukkan ke Ready Queue
         setProcesses((ps) => ps.map((p) => ({ ...p, state: 'ready' })));
         setReadyQueue(processes.map((p) => p.id));
         setLog((l) => [
@@ -89,21 +83,26 @@ export function useScheduler(initialProcs) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Helpers
+    // ============================================================
+    // 5. HELPER FUNCTIONS (FUNGSI BANTUAN)
+    // ============================================================
     const findProc = (id) => processesRef.current.find((p) => p.id === id);
 
+    // Masukkan proses ke Ready Queue
     const enqueueReady = useCallback((id, note) => {
         setProcesses((ps) => ps.map((p) => (p.id === id ? { ...p, state: 'ready' } : p)));
         setReadyQueue((q) => (q.includes(id) ? q : [...q, id]));
         if (note) setLog((l) => [...l, `T=${timeRef.current}: ${note}`]);
     }, []);
 
+    // Pindahkan proses ke Blocked Queue (saat menunggu resource)
     const blockOn = useCallback((id, r) => {
         setProcesses((ps) => ps.map((p) => (p.id === id ? { ...p, state: 'blocked' } : p)));
         setBlockedQueues((bq) => ({ ...bq, [r]: [...bq[r], id] }));
         setLog((l) => [...l, `T=${timeRef.current}: ${id} meminta Resource ${r} -> dipindahkan ke Blocked Queue (${r}).`] );
     }, []);
 
+    // Coba bangunkan proses dari Blocked Queue jika resource tersedia
     const tryWake = useCallback((r) => {
         setBlockedQueues((bq) => {
             const queue = [...bq[r]];
@@ -117,8 +116,9 @@ export function useScheduler(initialProcs) {
         });
     }, []);
 
-// Di dalam file: simulator_so/hooks/useScheduler.js
-
+    // ============================================================
+    // 6. LOGIKA PEMILIHAN PROSES (ALGORITMA PENJADWALAN)
+    // ============================================================
     const pickFromReady = useCallback(() => {
         const rq = readyRef.current;
         if (!rq || rq.length === 0) return null;
@@ -138,14 +138,13 @@ export function useScheduler(initialProcs) {
             return sorted[0];
         }
 
-        // --- IMPLEMENTASI BARU: SJF (Shortest Job First) ---
+        // Algoritma SJF (Shortest Job First)
         if (algorithm === 'SJF') {
             const sorted = [...rq].sort((a, b) => {
                 const pA = findProc(a);
                 const pB = findProc(b);
 
-                // Ambil durasi instruksi CPU saat ini untuk masing-masing proses
-                // Kita perlu mengecek instruksi di indeks 'ip' saat ini
+                // Ambil durasi instruksi CPU saat ini
                 const instA = pA?.instructions[pA.ip];
                 const durationA = (instA && instA.type === 'CPU') ? instA.duration : 0;
 
@@ -153,7 +152,6 @@ export function useScheduler(initialProcs) {
                 const durationB = (instB && instB.type === 'CPU') ? instB.duration : 0;
 
                 // Sort dari durasi terpendek ke terpanjang
-                // Jika durasi sama, gunakan aturan FCFS (siapa yang antri duluan)
                 if (durationA === durationB) {
                     return rq.indexOf(a) - rq.indexOf(b);
                 }
@@ -164,6 +162,9 @@ export function useScheduler(initialProcs) {
         return rq[0];
     }, [algorithm]);
 
+    // ============================================================
+    // 7. PEREKAMAN DATA GANTT CHART
+    // ============================================================
     const snapshotGantt = useCallback(() => {
         const entries = {};
         processesRef.current.forEach((p) => (entries[p.id] = p.state));
@@ -171,86 +172,81 @@ export function useScheduler(initialProcs) {
         setGantt((g) => [...g, { t: timeRef.current, entries }]);
     }, []);
 
-    // One simulation step (tick)
+    // ============================================================
+    // 8. INTI SIMULASI (Dijalankan setiap detik/tick)
+    // ============================================================
     const stepSimulation = useCallback(() => {
-        // advance time
+        // Tambah waktu simulasi
         setTime((t) => t + 1);
 
-        // operate on CPU
         const cpuNow = cpuRef.current;
-        // Di dalam file: hafidzjnr/simulator_so/simulator_so-main/simulator_so/hooks/useScheduler.js
 
+        // --- KONDISI A: CPU SEDANG IDLE / KOSONG ---
         if (!cpuNow.running) {
-            // schedule
+            // Pilih proses dari Ready Queue berdasarkan algoritma
             const pick = pickFromReady();
             if (pick) {
-                // remove from ready
+                // Hapus dari Ready Queue
                 setReadyQueue((rq) => rq.filter((x) => x !== pick));
                 const p = findProc(pick);
                 const inst = p.instructions[p.ip]; // Instruksi saat ini
 
                 if (!inst || inst.type === 'END') {
-                    // --- AWAL PERBAIKAN ---
-                    // Langsung tangani instruksi END jika itu yang pertama
+                    // --- PROSES SELESAI ---
                     setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, state: 'finished' } : pr)));
                     setLog((l) => [...l, `T=${timeRef.current}: ${pick} selesai (instruksi END).`]);
-                    // --- AKHIR PERBAIKAN ---
                 } else if (inst.type === 'CPU') {
-                    // Logika asli Anda untuk CPU
+                    // --- EKSEKUSI CPU ---
                     let runLen = inst.duration;
+                    // Jika Round Robin, batasi durasi dengan Quantum
                     if (algorithm === 'RR') runLen = Math.min(runLen, quantum);
                     setCpu({ running: pick, remaining: runLen });
                     setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, state: 'running', remaining: runLen } : pr)));
                     setLog((l) => [...l, `T=${timeRef.current}: Penjadwal memilih ${pick} untuk dieksekusi.`]);
                 } else if (inst.type === 'LOCK') {
-                    // --- AWAL PERBAIKAN ---
-                    // Langsung tangani instruksi LOCK
+                    // --- MEMINTA RESOURCE (LOCK) ---
                     const r = inst.resource;
                     if (!resourcesRef.current[r]) {
-                        // Resource tersedia
+                        // Resource tersedia -> Ambil
                         setResources((res) => ({ ...res, [r]: pick }));
                         setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, ip: p.ip + 1, state: 'ready' } : pr)));
                         setReadyQueue((rq) => [...rq, pick]); // Masuk ready queue lagi untuk instruksi berikutnya
                         setLog((l) => [...l, `T=${timeRef.current}: Resource ${r} bebas. ${pick} meng-LOCK Resource ${r}.`]);
                     } else {
-                        // Resource sibuk, proses diblokir
+                        // Resource sibuk -> Blokir proses
                         blockOn(pick, r);
                     }
-                    // --- AKHIR PERBAIKAN ---
                 } else if (inst.type === 'UNLOCK') {
-                    // --- AWAL PERBAIKAN ---
-                    // Langsung tangani instruksi UNLOCK
+                    // --- MELEPAS RESOURCE (UNLOCK) ---
                     const r = inst.resource;
                     setResources((res) => {
                         const newRes = { ...res, [r]: null };
                         setLog((l) => [...l, `T=${timeRef.current}: ${pick} melakukan UNLOCK Resource ${r}.`]);
-                        tryWake(r); // Coba bangunkan proses lain
+                        tryWake(r); // Coba bangunkan proses lain yang menunggu
                         return newRes;
                     });
                     setProcesses((ps) => ps.map((pr) => (pr.id === pick ? { ...pr, ip: p.ip + 1, state: 'ready' } : pr)));
                     setReadyQueue((rq) => [...rq, pick]); // Masuk ready queue lagi
-                    // --- AKHIR PERBAIKAN ---
                 } else {
-                     // Fallback jika ada tipe instruksi aneh (seharusnya tidak terjadi)
+                     // Fallback instruksi tidak dikenal
                      enqueueReady(pick, `${pick} masuk Ready Queue (instruksi tidak dikenal).`);
                 }
             }
         } else {
-            // ... (Sisa kode Anda untuk 'CPU is running' tetap sama) ...
-            // CPU is running
+            // --- KONDISI B: CPU SEDANG BEKERJA (RUNNING) ---
             setCpu((c) => {
                 const remaining = c.remaining - 1;
+                // Jika masih ada sisa waktu, lanjutkan
                 if (remaining > 0) return { ...c, remaining };
 
-                // --- AWAL PERBAIKAN BUG ROUND ROBIN ---
+                // --- PENANGANAN KHUSUS ROUND ROBIN (BUG FIX PREEMPTION) ---
                 const pid = c.running;
                 const p = findProc(pid);
                 const curInst = p.instructions[p.ip];
 
                 // Cek apakah instruksi sekarang adalah CPU
                 if (curInst && curInst.type === 'CPU') {
-                    // Hitung berapa lama kita baru saja berjalan
-                    // (Untuk RR, ini biasanya sama dengan Quantum, kecuali sisa durasi lebih kecil)
+                    // Hitung waktu yang sudah dijalankan
                     const timeExecuted = (algorithm === 'RR') ? Math.min(curInst.duration, quantum) : curInst.duration;
                     
                     // Hitung sisa durasi instruksi sebenarnya
@@ -268,39 +264,34 @@ export function useScheduler(initialProcs) {
                             return pr;
                          }));
                          
-                         // 2. Masukkan kembali ke Ready Queue (Preemption)
+                         // 2. Masukkan kembali ke Ready Queue (Preemption / Context Switch)
                          setReadyQueue((rq) => [...rq, pid]);
                          setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} Quantum habis, sisa burst ${realRemaining}. Kembali ke Ready Queue.`]);
                          
                          return { running: null, remaining: 0 };
                     }
                 }
-                // --- AKHIR PERBAIKAN BUG ---
+                // --- AKHIR PENANGANAN ROUND ROBIN ---
 
-                // Jika sampai sini, berarti instruksi benar-benar selesai (atau bukan instruksi CPU)
-                // Lanjutkan dengan logika asli untuk pindah IP (nextIp)...
-                
+                // Jika sampai sini, berarti instruksi benar-benar selesai
+                // Lanjut ke Instruction Pointer (IP) berikutnya
                 let nextIp = p.ip;
                 if (curInst && curInst.type === 'CPU') nextIp = p.ip + 1;
 
                 const nextInst = p.instructions[nextIp];
                 
-                // ... (Lanjutkan dengan sisa kode asli Anda mulai dari: setProcesses((ps) => ps.map... ) ...
-                
-                // Update proses ke idle sementara
+                // Update proses ke state idle sementara sebelum diproses ulang
                  setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, ip: nextIp, remaining: 0, state: 'idle' } : pr)));
                  setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} menyelesaikan CPU burst.`]);
 
-                 // Handle instruction END, LOCK, UNLOCK, CPU seperti kode asli...
+                 // Cek Instruksi Selanjutnya (Next Instruction)
                  if (!nextInst || nextInst.type === 'END') {
-                    // ... (kode asli)
                     setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, state: 'finished' } : pr)));
                     setLog((l) => [...l, `T=${timeRef.current + 1}: ${pid} selesai.`]);
                     return { running: null, remaining: 0 };
                  }
                  
                  if (nextInst.type === 'LOCK') {
-                    // ... (kode asli)
                      const r = nextInst.resource;
                     if (!resourcesRef.current[r]) {
                         setResources((res) => ({ ...res, [r]: pid }));
@@ -314,7 +305,6 @@ export function useScheduler(initialProcs) {
                  }
 
                  if (nextInst.type === 'UNLOCK') {
-                    // ... (kode asli)
                     const r = nextInst.resource;
                     setResources((res) => {
                         const newRes = { ...res, [r]: null };
@@ -328,26 +318,26 @@ export function useScheduler(initialProcs) {
                  }
 
                  if (nextInst.type === 'CPU') {
-                    // ... (kode asli)
                     setProcesses((ps) => ps.map((pr) => (pr.id === pid ? { ...pr, state: 'ready', ip: nextIp } : pr)));
                     setReadyQueue((rq) => [...rq, pid]);
                     return { running: null, remaining: 0 };
                  }
 
-                 
-
                  return { running: null, remaining: 0 };
             });
         }
 
-        // snapshot gantt after actions
+        // Rekam snapshot untuk Gantt Chart
         snapshotGantt();
     }, [pickFromReady, enqueueReady, blockOn, tryWake, algorithm, quantum, snapshotGantt]);
 
-    // start / pause
+    // ============================================================
+    // 9. KONTROL SIMULASI (START, PAUSE, RESET)
+    // ============================================================
     const startSimulation = useCallback(() => {
         if (intervalRef.current) return;
         runningRef.current = true;
+        // Jalankan stepSimulation setiap 1 detik
         intervalRef.current = setInterval(() => {
             stepSimulation();
         }, 1000);
@@ -364,6 +354,7 @@ export function useScheduler(initialProcs) {
     const resetSimulation = useCallback(() => {
         pauseSimulation();
         setTime(0);
+        // Reset semua state ke kondisi awal
         setProcesses(defaultProcs.map((p) => ({ ...p, ip: 0, remaining: 0, state: 'ready' })));
         setReadyQueue(defaultProcs.map((p) => p.id));
         setBlockedQueues({ A: [], B: [] });
@@ -373,10 +364,9 @@ export function useScheduler(initialProcs) {
         setGantt([]);
         }, [pauseSimulation, defaultProcs]);
 
-    // Di dalam file: hooks/useScheduler.js
-
-// ... (sisipkan ini SEBELUM 'return { ... }' di akhir file) ...
-
+    // ============================================================
+    // 10. MENAMBAHKAN PROSES BARU
+    // ============================================================
     const addProcess = useCallback((newProcess) => {
         // Cek duplikat ID
         if (processesRef.current.find(p => p.id === newProcess.id)) {
@@ -398,9 +388,11 @@ export function useScheduler(initialProcs) {
             ...l,
             `T=${timeRef.current}: ${newProcess.id} (priority=${newProcess.priority}) tiba, masuk Ready Queue.`,
         ]);
-    }, []); // dependensi kosong aman karena hanya menggunakan refs dan setters
+    }, []);
 
-    // expose API
+    // ============================================================
+    // 11. EXPOSE API KE UI
+    // ============================================================
     return {
         processes,
         readyQueue,
@@ -418,9 +410,8 @@ export function useScheduler(initialProcs) {
         setQuantum,
         gantt,
         log,
-        addProcess, // <-- TAMBAHKAN INI
+        addProcess,
     };
 }
-
 
 export default useScheduler;
